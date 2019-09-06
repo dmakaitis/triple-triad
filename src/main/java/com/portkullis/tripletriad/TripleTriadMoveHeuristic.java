@@ -5,20 +5,22 @@ import com.portkullis.tripletriad.engine.MinMaxEngine;
 import java.util.List;
 import java.util.function.BiFunction;
 
-public class TripleTriadMoveHeuristic implements BiFunction<TripleTriadGameState, TripleTriadMove, Integer> {
+public class TripleTriadMoveHeuristic implements BiFunction<TripleTriadGameState, TripleTriadMove, Double> {
+
+    private final double EDGE_VALUE = 4.0;
 
     @Override
-    public Integer apply(TripleTriadGameState state, TripleTriadMove move) {
+    public Double apply(TripleTriadGameState state, TripleTriadMove move) {
         List<Card> cards = move.getPlayer() == MinMaxEngine.GameState.Player.MAXIMIZING ? state.getBlueCards() : state.getRedCards();
         Card card = cards.get(move.getCardIndex());
 
-        int score = 0;
+        double score = 0.0;
 
         switch (move.getLocation()) {
             case TOPLEFT:
             case TOP:
             case TOPRIGHT:
-                score += 4 * card.getDown();
+                score += EDGE_VALUE * card.getDown();
                 break;
             case LEFT:
             case CENTER:
@@ -28,7 +30,7 @@ public class TripleTriadMoveHeuristic implements BiFunction<TripleTriadGameState
             case BOTTOMLEFT:
             case BOTTOM:
             case BOTTOMRIGHT:
-                score += 4 * card.getUp();
+                score += EDGE_VALUE * card.getUp();
                 break;
             default:
                 break;
@@ -38,7 +40,7 @@ public class TripleTriadMoveHeuristic implements BiFunction<TripleTriadGameState
             case TOPLEFT:
             case LEFT:
             case BOTTOMLEFT:
-                score += 4 * card.getRight();
+                score += EDGE_VALUE * card.getRight();
                 break;
             case TOP:
             case CENTER:
@@ -48,7 +50,7 @@ public class TripleTriadMoveHeuristic implements BiFunction<TripleTriadGameState
             case TOPRIGHT:
             case RIGHT:
             case BOTTOMRIGHT:
-                score += 4 * card.getLeft();
+                score += EDGE_VALUE * card.getLeft();
                 break;
         }
 

@@ -28,13 +28,12 @@ public interface MinMaxEngine<T extends MinMaxEngine.GameState<M>, M> {
      *
      * @param moveApplier a function that applies a move to a game state, returning a new game state.
      * @param evaluator   the evaluator to use to calculate the value of a game state.
-     * @param heuristic   a heuristic for estimating the relative value of moves give a game state.
      * @param <S>         the game state type.
      * @param <N>         the move type.
      * @return an instance of the min-max engine.
      */
-    static <S extends GameState<N>, N> MinMaxEngine<S, N> getInstance(BiFunction<S, N, S> moveApplier, Function<S, Double> evaluator, BiFunction<S, N, Integer> heuristic) {
-        return new MinMax<>(moveApplier, evaluator, false);
+    static <S extends GameState<N>, N> MinMaxEngine<S, N> getInstance(BiFunction<S, N, S> moveApplier, Function<S, Double> evaluator) {
+        return new MinMax<>(moveApplier, evaluator);
     }
 
     /**
@@ -47,8 +46,8 @@ public interface MinMaxEngine<T extends MinMaxEngine.GameState<M>, M> {
      * @param <N>         the move type.
      * @return an instance of the min-max engine.
      */
-    static <S extends GameState<N>, N> MinMaxEngine<S, N> getInstancePrintStatus(BiFunction<S, N, S> moveApplier, Function<S, Double> evaluator, BiFunction<S, N, Integer> heuristic) {
-        return new MinMax<>(moveApplier, evaluator, true);
+    static <S extends GameState<N>, N> MinMaxEngine<S, N> getInstance(BiFunction<S, N, S> moveApplier, Function<S, Double> evaluator, BiFunction<S, N, Double> heuristic) {
+        return new MinMax<>(moveApplier, evaluator, heuristic);
     }
 
     /**

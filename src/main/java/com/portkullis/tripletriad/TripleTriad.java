@@ -14,34 +14,35 @@ import java.util.function.Function;
  */
 public class TripleTriad {
 
-    private final List<Card> blueCards = new ArrayList<Card>();
-    private final List<Card> redCards = new ArrayList<Card>();
+    private final List<Card> blueCards = new ArrayList<>();
+    private final List<Card> redCards = new ArrayList<>();
     private final MinMaxEngine.GameState.Player firstTurn;
 
     private final BiFunction<TripleTriadGameState, TripleTriadMove, TripleTriadGameState> engine;
     private final Function<TripleTriadGameState, Double> evaluator;
-    private final BiFunction<TripleTriadGameState, TripleTriadMove, Integer> moveHeuristic;
+    private final BiFunction<TripleTriadGameState, TripleTriadMove, Double> moveHeuristic;
     private final MinMaxEngine<TripleTriadGameState, TripleTriadMove> minMax;
 
     public TripleTriad() {
         engine = new TripleTriadEngine();
         evaluator = new TripleTriadEvaluator();
         moveHeuristic = new TripleTriadMoveHeuristic();
-        minMax = MinMaxEngine.getInstance(engine, evaluator, moveHeuristic);
+        minMax = MinMaxEngine.getInstance(engine, evaluator);
+//        minMax = MinMaxEngine.getInstance(engine, evaluator, moveHeuristic);
 
-        blueCards.add(Card.QUISTIS);
-        blueCards.add(Card.DIABLOS);
-        blueCards.add(Card.IFRIT);
-        blueCards.add(Card.MALBORO);
-        blueCards.add(Card.ELNOYLE);
+        blueCards.add(Card.C4467_5_TONBERRY_KING);
+        blueCards.add(Card.C6762_5_WEDGE_BIGGS);
+        blueCards.add(Card.C9239_8_MINIMOG);
+        blueCards.add(Card.C9862_8_IFRIT);
+        blueCards.add(Card.C926A_10_QUISTIS);
 
-        redCards.add(Card.SEIFER);
-        redCards.add(Card.BLOBRA);
-        redCards.add(Card.FUNGUAR);
-        redCards.add(Card.GEEZARD);
-        redCards.add(Card.COCKATRICE);
+        redCards.add(Card.C865A_10_ZELL);
+        redCards.add(Card.C7113_2_GRAT);
+        redCards.add(Card.C5637_5_ELNOYLE);
+        redCards.add(Card.C3345_2_BELHELMEL);
+        redCards.add(Card.C1533_1_BITE_BUG);
 
-        firstTurn = MinMaxEngine.GameState.Player.MINIMIZING;
+        firstTurn = MinMaxEngine.GameState.Player.MAXIMIZING;
     }
 
     public static void main(String[] args) {
@@ -54,9 +55,11 @@ public class TripleTriad {
 
         while (!state.isGameOver()) {
             if (state.getTurn() == MinMaxEngine.GameState.Player.MINIMIZING) {
-//                printBoard(state);
                 state = doPlayerMove(state);
+//                printBoard(state);
+//                state = doComputerMove(state);
             } else {
+//                printBoard(state);
                 state = doComputerMove(state);
             }
         }
