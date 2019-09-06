@@ -1,6 +1,10 @@
-package com.portkullis.tripletriad;
+package com.portkullis.tripletriad.manager.impl;
 
 import com.portkullis.tripletriad.engine.MinMaxEngine;
+import com.portkullis.tripletriad.manager.model.Card;
+import com.portkullis.tripletriad.manager.model.Location;
+import com.portkullis.tripletriad.manager.model.OwnedCard;
+import com.portkullis.tripletriad.manager.model.TripleTriadMove;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -50,6 +54,7 @@ public class TripleTriadGameState implements MinMaxEngine.GameState<TripleTriadM
         this.board = board;
     }
 
+    @Override
     public Player getTurn() {
         return turn;
     }
@@ -66,12 +71,14 @@ public class TripleTriadGameState implements MinMaxEngine.GameState<TripleTriadM
         return board;
     }
 
+    @Override
     public boolean isGameOver() {
         return getEmptyLocations().isEmpty();
     }
 
+    @Override
     public Collection<TripleTriadMove> getLegalMoves() {
-        Set<TripleTriadMove> moves = new HashSet<TripleTriadMove>();
+        Set<TripleTriadMove> moves = new HashSet<>();
         Collection<Card> cards = turn == Player.MAXIMIZING ? blueCards : redCards;
         Set<Location> emptySquares = getEmptyLocations();
         for (int i = 0; i < cards.size(); i++) {
@@ -83,7 +90,7 @@ public class TripleTriadGameState implements MinMaxEngine.GameState<TripleTriadM
     }
 
     private Set<Location> getEmptyLocations() {
-        Set<Location> locations = new HashSet<Location>();
+        Set<Location> locations = new HashSet<>();
         for (Location l : Location.values()) {
             if (board[l.getBoardIndex()] == null) {
                 locations.add(l);

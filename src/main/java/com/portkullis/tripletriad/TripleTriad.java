@@ -1,13 +1,17 @@
 package com.portkullis.tripletriad;
 
 import com.portkullis.tripletriad.engine.MinMaxEngine;
+import com.portkullis.tripletriad.manager.TripleTriadManager;
+import com.portkullis.tripletriad.manager.model.Card;
+import com.portkullis.tripletriad.manager.model.Location;
+import com.portkullis.tripletriad.manager.model.OwnedCard;
+import com.portkullis.tripletriad.manager.model.TripleTriadMove;
+import com.portkullis.tripletriad.manager.model.TripleTriadState;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 /**
  * Created by darius on 1/18/16.
@@ -18,18 +22,9 @@ public class TripleTriad {
     private final List<Card> redCards = new ArrayList<>();
     private final MinMaxEngine.GameState.Player firstTurn;
 
-    private final BiFunction<TripleTriadGameState, TripleTriadMove, TripleTriadGameState> engine;
-    private final Function<TripleTriadGameState, Double> evaluator;
-    private final BiFunction<TripleTriadGameState, TripleTriadMove, Double> moveHeuristic;
-    private final MinMaxEngine<TripleTriadGameState, TripleTriadMove> minMax;
+    private final TripleTriadManager manager = TripleTriadManager.getInstance();
 
     public TripleTriad() {
-        engine = new TripleTriadEngine();
-        evaluator = new TripleTriadEvaluator();
-        moveHeuristic = new TripleTriadMoveHeuristic();
-        minMax = MinMaxEngine.getInstance(engine, evaluator);
-//        minMax = MinMaxEngine.getInstance(engine, evaluator, moveHeuristic);
-
         blueCards.add(Card.C4467_5_TONBERRY_KING);
         blueCards.add(Card.C6762_5_WEDGE_BIGGS);
         blueCards.add(Card.C9239_8_MINIMOG);
@@ -51,21 +46,14 @@ public class TripleTriad {
     }
 
     private void run() {
-        TripleTriadGameState state = new TripleTriadGameState(firstTurn, blueCards, redCards);
+        TripleTriadState state = manager.startNewGame(blueCards, redCards, firstTurn);
 
         while (!state.isGameOver()) {
-            if (state.getTurn() == MinMaxEngine.GameState.Player.MINIMIZING) {
-                state = doPlayerMove(state);
-//                printBoard(state);
-//                state = doComputerMove(state);
-            } else {
-//                printBoard(state);
-                state = doComputerMove(state);
-            }
+            state = doPlayerMove(state);
         }
 
         printBoard(state);
-        double score = evaluator.apply(state);
+        double score = state.getScore();
         if (score < 0) {
             System.out.println("Winner: Red");
         } else if (score == 0) {
@@ -75,7 +63,7 @@ public class TripleTriad {
         }
     }
 
-    private TripleTriadGameState doPlayerMove(TripleTriadGameState state) {
+    private TripleTriadState doPlayerMove(TripleTriadState state) {
         printBoard(state);
 
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
@@ -112,30 +100,30 @@ public class TripleTriad {
             }
         }
 
-        return engine.apply(state, move);
+        return manager.applyMove(state, move);
     }
 
-    private void printBoard(TripleTriadGameState state) {
-        List<String> redCards = renderCards(MinMaxEngine.GameState.Player.MINIMIZING, state.getRedCards());
-        List<String> blueCards = renderCards(MinMaxEngine.GameState.Player.MAXIMIZING, state.getBlueCards());
+    private void printBoard(TripleTriadState state) {
+        List<String> red = renderCards(MinMaxEngine.GameState.Player.MINIMIZING, state.getRedCards());
+        List<String> blue = renderCards(MinMaxEngine.GameState.Player.MAXIMIZING, state.getBlueCards());
         List<String> board = renderBoard(state.getBoard());
 
-        int maxRows = Math.max(Math.max(redCards.size(), blueCards.size()), board.size());
+        int maxRows = Math.max(Math.max(red.size(), blue.size()), board.size());
 
-        int redTop = (maxRows - redCards.size()) / 2;
-        int blueTop = (maxRows - blueCards.size()) / 2;
+        int redTop = (maxRows - red.size()) / 2;
+        int blueTop = (maxRows - blue.size()) / 2;
         int boardTop = (maxRows - board.size()) / 2;
 
         for (int i = 0; i < maxRows; i++) {
-            printRow(i, redTop, redCards, "     ");
+            printRow(i, redTop, red, "     ");
             System.out.print("  ");
             printRow(i, boardTop, board, "             ");
             System.out.print("  ");
-            printRow(i, blueTop, blueCards, "     ");
+            printRow(i, blueTop, blue, "     ");
             System.out.println();
         }
 
-        System.out.println("Score: " + evaluator.apply(state));
+        System.out.println("Score: " + state.getScore());
     }
 
     private void printRow(int row, int top, List<String> data, String empty) {
@@ -147,11 +135,11 @@ public class TripleTriad {
     }
 
     private List<String> renderBoard(OwnedCard[] board) {
-        List<String> rVal = new ArrayList<String>();
+        List<String> rVal = new ArrayList<>();
 
         rVal.add("+---+---+---+");
 
-        List<List<String>> renderedCards = new ArrayList<List<String>>();
+        List<List<String>> renderedCards = new ArrayList<>();
         for (int i = 0; i < 9; i++) {
             if (board[i] == null) {
                 renderedCards.add(renderCell(i + 1));
@@ -177,7 +165,7 @@ public class TripleTriad {
     }
 
     private List<String> renderCards(MinMaxEngine.GameState.Player player, List<Card> redCards) {
-        List<String> rVal = new ArrayList<String>();
+        List<String> rVal = new ArrayList<>();
         rVal.add("+---+");
         for (Card c : redCards) {
             List<String> r = renderCard(player, c);
@@ -190,7 +178,7 @@ public class TripleTriad {
     }
 
     private List<String> renderCard(MinMaxEngine.GameState.Player player, Card card) {
-        List<String> rVal = new ArrayList<String>();
+        List<String> rVal = new ArrayList<>();
         rVal.add(" " + toCardChar(card.getUp()) + " ");
         rVal.add(toCardChar(card.getLeft()) + (player == MinMaxEngine.GameState.Player.MINIMIZING ? "-" : "+") + toCardChar(card.getRight()));
         rVal.add(" " + toCardChar(card.getDown()) + " ");
@@ -198,7 +186,7 @@ public class TripleTriad {
     }
 
     private List<String> renderCell(int cell) {
-        List<String> rVal = new ArrayList<String>();
+        List<String> rVal = new ArrayList<>();
         rVal.add("   ");
         rVal.add(" " + toCardChar(cell) + " ");
         rVal.add("   ");
@@ -207,12 +195,6 @@ public class TripleTriad {
 
     private String toCardChar(int value) {
         return value > 9 ? "A" : "" + value;
-    }
-
-    private TripleTriadGameState doComputerMove(TripleTriadGameState state) {
-        TripleTriadMove move = minMax.findMove(state, 1000);
-        System.out.println("Selected move: " + move);
-        return engine.apply(state, move);
     }
 
 }

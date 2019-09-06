@@ -1,10 +1,13 @@
-package com.portkullis.tripletriad;
+package com.portkullis.tripletriad.manager.impl;
 
 import com.portkullis.tripletriad.engine.MinMaxEngine;
+import com.portkullis.tripletriad.manager.model.Card;
+import com.portkullis.tripletriad.manager.model.Location;
+import com.portkullis.tripletriad.manager.model.OwnedCard;
+import com.portkullis.tripletriad.manager.model.TripleTriadMove;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.BiFunction;
 
 /**
@@ -19,14 +22,14 @@ public class TripleTriadEngine implements BiFunction<TripleTriadGameState, Tripl
         }
 
         MinMaxEngine.GameState.Player newTurn = state.getTurn() == MinMaxEngine.GameState.Player.MINIMIZING ? MinMaxEngine.GameState.Player.MAXIMIZING : MinMaxEngine.GameState.Player.MINIMIZING;
-        List<Card> newRed = new ArrayList<Card>(state.getRedCards());
-        List<Card> newBlue = new ArrayList<Card>(state.getBlueCards());
+        List<Card> newRed = new ArrayList<>(state.getRedCards());
+        List<Card> newBlue = new ArrayList<>(state.getBlueCards());
         OwnedCard[] newBoard = new OwnedCard[9];
         for (int i = 0; i < 9; i++) {
             newBoard[i] = state.getBoard()[i];
         }
 
-        Card selectedCard = null;
+        Card selectedCard;
         if (state.getTurn() == MinMaxEngine.GameState.Player.MINIMIZING) {
             selectedCard = newRed.remove(move.getCardIndex());
         } else {
@@ -36,45 +39,45 @@ public class TripleTriadEngine implements BiFunction<TripleTriadGameState, Tripl
         newBoard[move.getLocation().getBoardIndex()] = newCard;
 
         // Now, do the card flipping...
+        flipCards(state, move, newBoard, newCard);
+
+        return new TripleTriadGameState(newTurn, newBlue, newRed, newBoard);
+    }
+
+    private void flipCards(TripleTriadGameState state, TripleTriadMove move, OwnedCard[] newBoard, OwnedCard newCard) {
         Location location = move.getLocation();
 
         // Check up
-        Optional<Location> compareLocation = location.getUp();
-        if (compareLocation.isPresent()) {
-            OwnedCard compare = newBoard[compareLocation.get().getBoardIndex()];
+        location.getUp().ifPresent(compareLocation -> {
+            OwnedCard compare = newBoard[compareLocation.getBoardIndex()];
             if (compare != null && compare.getPlayer() != newCard.getPlayer() && newCard.getCard().getUp() > compare.getCard().getDown()) {
-                newBoard[compareLocation.get().getBoardIndex()] = new OwnedCard(state.getTurn(), compare.getCard());
+                newBoard[compareLocation.getBoardIndex()] = new OwnedCard(state.getTurn(), compare.getCard());
             }
-        }
+        });
 
         // Check down
-        compareLocation = location.getDown();
-        if (compareLocation.isPresent()) {
-            OwnedCard compare = newBoard[compareLocation.get().getBoardIndex()];
+        location.getDown().ifPresent(compareLocation -> {
+            OwnedCard compare = newBoard[compareLocation.getBoardIndex()];
             if (compare != null && compare.getPlayer() != newCard.getPlayer() && newCard.getCard().getDown() > compare.getCard().getUp()) {
-                newBoard[compareLocation.get().getBoardIndex()] = new OwnedCard(state.getTurn(), compare.getCard());
+                newBoard[compareLocation.getBoardIndex()] = new OwnedCard(state.getTurn(), compare.getCard());
             }
-        }
+        });
 
         // Check left
-        compareLocation = location.getLeft();
-        if (compareLocation.isPresent()) {
-            OwnedCard compare = newBoard[compareLocation.get().getBoardIndex()];
+        location.getLeft().ifPresent(compareLocation -> {
+            OwnedCard compare = newBoard[compareLocation.getBoardIndex()];
             if (compare != null && compare.getPlayer() != newCard.getPlayer() && newCard.getCard().getLeft() > compare.getCard().getRight()) {
-                newBoard[compareLocation.get().getBoardIndex()] = new OwnedCard(state.getTurn(), compare.getCard());
+                newBoard[compareLocation.getBoardIndex()] = new OwnedCard(state.getTurn(), compare.getCard());
             }
-        }
+        });
 
         // Check right
-        compareLocation = location.getRight();
-        if (compareLocation.isPresent()) {
-            OwnedCard compare = newBoard[compareLocation.get().getBoardIndex()];
+        location.getRight().ifPresent(compareLocation -> {
+            OwnedCard compare = newBoard[compareLocation.getBoardIndex()];
             if (compare != null && compare.getPlayer() != newCard.getPlayer() && newCard.getCard().getRight() > compare.getCard().getLeft()) {
-                newBoard[compareLocation.get().getBoardIndex()] = new OwnedCard(state.getTurn(), compare.getCard());
+                newBoard[compareLocation.getBoardIndex()] = new OwnedCard(state.getTurn(), compare.getCard());
             }
-        }
-
-        return new TripleTriadGameState(newTurn, newBlue, newRed, newBoard);
+        });
     }
 
 }

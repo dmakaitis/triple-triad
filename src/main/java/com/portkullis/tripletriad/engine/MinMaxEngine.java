@@ -4,7 +4,7 @@ import com.portkullis.tripletriad.engine.impl.MinMax;
 
 import java.util.Collection;
 import java.util.function.BiFunction;
-import java.util.function.Function;
+import java.util.function.ToDoubleFunction;
 
 /**
  * Interface for a min-max game move evaluator.
@@ -32,7 +32,7 @@ public interface MinMaxEngine<T extends MinMaxEngine.GameState<M>, M> {
      * @param <N>         the move type.
      * @return an instance of the min-max engine.
      */
-    static <S extends GameState<N>, N> MinMaxEngine<S, N> getInstance(BiFunction<S, N, S> moveApplier, Function<S, Double> evaluator) {
+    static <S extends GameState<N>, N> MinMaxEngine<S, N> getInstance(BiFunction<S, N, S> moveApplier, ToDoubleFunction<S> evaluator) {
         return new MinMax<>(moveApplier, evaluator);
     }
 
@@ -46,7 +46,7 @@ public interface MinMaxEngine<T extends MinMaxEngine.GameState<M>, M> {
      * @param <N>         the move type.
      * @return an instance of the min-max engine.
      */
-    static <S extends GameState<N>, N> MinMaxEngine<S, N> getInstance(BiFunction<S, N, S> moveApplier, Function<S, Double> evaluator, BiFunction<S, N, Double> heuristic) {
+    static <S extends GameState<N>, N> MinMaxEngine<S, N> getInstance(BiFunction<S, N, S> moveApplier, ToDoubleFunction<S> evaluator, BiFunction<S, N, Double> heuristic) {
         return new MinMax<>(moveApplier, evaluator, heuristic);
     }
 
@@ -82,7 +82,7 @@ public interface MinMaxEngine<T extends MinMaxEngine.GameState<M>, M> {
          * Enumeration of players.
          */
         enum Player {
-            MAXIMIZING, MINIMIZING;
+            MAXIMIZING, MINIMIZING
         }
 
     }

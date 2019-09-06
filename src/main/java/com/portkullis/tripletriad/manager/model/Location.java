@@ -1,4 +1,4 @@
-package com.portkullis.tripletriad;
+package com.portkullis.tripletriad.manager.model;
 
 import java.util.Optional;
 
@@ -13,7 +13,7 @@ public enum Location {
 
     private final int boardIndex;
 
-    private Location(int boardIndex) {
+    Location(int boardIndex) {
         this.boardIndex = boardIndex;
     }
 

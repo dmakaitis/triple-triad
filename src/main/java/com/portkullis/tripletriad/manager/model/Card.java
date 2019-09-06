@@ -1,9 +1,11 @@
-package com.portkullis.tripletriad;
+package com.portkullis.tripletriad.manager.model;
+
+import java.util.Objects;
 
 /**
  * Created by darius on 1/18/16.
  */
-public class Card {
+public class Card implements Comparable<Card> {
 
     // Level 1
     public static final Card C1541_1_GEEZARD = new Card(1, 1, "Geezard", 1, 5, 4, 1);
@@ -92,6 +94,34 @@ public class Card {
     @Override
     public String toString() {
         return name + " [" + up + ", " + left + ", " + right + ", " + down + "]";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Card card = (Card) o;
+        return level == card.level &&
+                sortIndex == card.sortIndex &&
+                getUp() == card.getUp() &&
+                getDown() == card.getDown() &&
+                getLeft() == card.getLeft() &&
+                getRight() == card.getRight() &&
+                Objects.equals(getName(), card.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(level, sortIndex, getName(), getUp(), getDown(), getLeft(), getRight());
+    }
+
+    @Override
+    public int compareTo(Card o) {
+        int compare = level - o.level;
+        if (compare == 0) {
+            compare = sortIndex - o.sortIndex;
+        }
+        return compare;
     }
 
     public String getName() {

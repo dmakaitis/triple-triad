@@ -1,6 +1,9 @@
-package com.portkullis.tripletriad;
+package com.portkullis.tripletriad.manager.model;
 
 import com.portkullis.tripletriad.engine.MinMaxEngine;
+
+import java.util.Objects;
+import java.util.StringJoiner;
 
 /**
  * Created by darius on 1/18/16.
@@ -22,31 +25,24 @@ public class TripleTriadMove {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         TripleTriadMove that = (TripleTriadMove) o;
-
-        if (cardIndex != that.cardIndex) return false;
-        if (player != that.player) return false;
-        return location == that.location;
-
+        return getCardIndex() == that.getCardIndex() &&
+                getPlayer() == that.getPlayer() &&
+                getLocation() == that.getLocation();
     }
 
     @Override
     public int hashCode() {
-        int result = player.hashCode();
-        result = 31 * result + cardIndex;
-        result = 31 * result + location.hashCode();
-        return result;
+        return Objects.hash(getPlayer(), getCardIndex(), getLocation());
     }
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("TripleTriadMove{");
-        sb.append("player=").append(player);
-        sb.append(", cardIndex=").append(cardIndex);
-        sb.append(", location=").append(location);
-        sb.append('}');
-        return sb.toString();
+        return new StringJoiner(", ", TripleTriadMove.class.getSimpleName() + "[", "]")
+                .add("player=" + player)
+                .add("cardIndex=" + cardIndex)
+                .add("location=" + location)
+                .toString();
     }
 
     public MinMaxEngine.GameState.Player getPlayer() {

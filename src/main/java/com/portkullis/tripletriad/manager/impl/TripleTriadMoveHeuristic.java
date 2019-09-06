@@ -1,13 +1,15 @@
-package com.portkullis.tripletriad;
+package com.portkullis.tripletriad.manager.impl;
 
 import com.portkullis.tripletriad.engine.MinMaxEngine;
+import com.portkullis.tripletriad.manager.model.Card;
+import com.portkullis.tripletriad.manager.model.TripleTriadMove;
 
 import java.util.List;
 import java.util.function.BiFunction;
 
 public class TripleTriadMoveHeuristic implements BiFunction<TripleTriadGameState, TripleTriadMove, Double> {
 
-    private final double EDGE_VALUE = 4.0;
+    private static final double EDGE_VALUE = 4.0;
 
     @Override
     public Double apply(TripleTriadGameState state, TripleTriadMove move) {

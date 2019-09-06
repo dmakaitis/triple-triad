@@ -1,4 +1,4 @@
-package com.portkullis.tripletriad;
+package com.portkullis.tripletriad.manager.model;
 
 import com.portkullis.tripletriad.engine.MinMaxEngine;
 
