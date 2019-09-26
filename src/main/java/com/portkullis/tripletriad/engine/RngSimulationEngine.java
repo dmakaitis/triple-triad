@@ -14,6 +14,20 @@ public interface RngSimulationEngine {
     void reset();
 
     /**
+     * Returns the current value of the seed.
+     *
+     * @return the current value of the seed.
+     */
+    int getSeed();
+
+    /**
+     * Sets the current value of the seed.
+     *
+     * @param seed the new value of the seed.
+     */
+    void setSeed(int seed);
+
+    /**
      * Returns the next random value from the RNG simulator.
      *
      * @return the next random value from the RNG simulator.

@@ -40,6 +40,16 @@ public class RngSimulationEngineImpl implements RngSimulationEngine {
     }
 
     @Override
+    public int getSeed() {
+        return seed;
+    }
+
+    @Override
+    public void setSeed(int seed) {
+        this.seed = seed;
+    }
+
+    @Override
     public int getNextValue() {
         return randomValues.get(seed++);
     }
