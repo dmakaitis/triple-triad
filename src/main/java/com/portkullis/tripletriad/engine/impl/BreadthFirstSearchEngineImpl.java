@@ -2,15 +2,20 @@ package com.portkullis.tripletriad.engine.impl;
 
 import com.portkullis.tripletriad.engine.BreadthFirstSearchEngine;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static java.util.Collections.emptyList;
 
 public class BreadthFirstSearchEngineImpl implements BreadthFirstSearchEngine {
 
     @Override
-    public <N, E extends Function<N, N>> List<E> findPath(N startNode, Function<N, Collection<E>> edgeProvider, Function<N, Boolean> targetSpecification, int searchDepth) {
+    public <N, E extends Function<N, N>> List<E> findPath(N startNode, Function<N, Collection<E>> edgeProvider, Predicate<N> targetSpecification, int searchDepth) {
         Deque<Branch<N, E>> searchBranches = new LinkedList<>();
         searchBranches.add(new Branch<>(startNode, emptyList()));
         Branch result = null;
@@ -18,7 +23,7 @@ public class BreadthFirstSearchEngineImpl implements BreadthFirstSearchEngine {
         while (!searchBranches.isEmpty()) {
             Branch<N, E> branch = searchBranches.poll();
             if (branch.path.size() <= searchDepth) {
-                if (targetSpecification.apply(branch.endNode)) {
+                if (targetSpecification.test(branch.endNode)) {
                     result = branch;
                     searchBranches.clear();
                 } else {

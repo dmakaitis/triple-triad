@@ -5,6 +5,7 @@ import com.portkullis.tripletriad.engine.impl.BreadthFirstSearchEngineImpl;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Interface for an engine that performs a breadth-first search over a problem space.
@@ -20,7 +21,7 @@ public interface BreadthFirstSearchEngine {
      * @param searchDepth         the maximum depth that will be search in the problem space.
      * @return the list of edges that connect the start node to the target node.
      */
-    <N, E extends Function<N, N>> List<E> findPath(N startNode, Function<N, Collection<E>> edgeProvider, Function<N, Boolean> targetSpecification, int searchDepth);
+    <N, E extends Function<N, N>> List<E> findPath(N startNode, Function<N, Collection<E>> edgeProvider, Predicate<N> targetSpecification, int searchDepth);
 
     /**
      * Returns an instance of the breadth first search engine.
