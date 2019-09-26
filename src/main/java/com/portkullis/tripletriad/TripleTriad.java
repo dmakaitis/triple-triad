@@ -2,11 +2,7 @@ package com.portkullis.tripletriad;
 
 import com.portkullis.tripletriad.engine.MinMaxEngine;
 import com.portkullis.tripletriad.manager.TripleTriadManager;
-import com.portkullis.tripletriad.manager.model.Card;
-import com.portkullis.tripletriad.manager.model.Location;
-import com.portkullis.tripletriad.manager.model.OwnedCard;
-import com.portkullis.tripletriad.manager.model.TripleTriadMove;
-import com.portkullis.tripletriad.manager.model.TripleTriadState;
+import com.portkullis.tripletriad.manager.model.*;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -25,19 +21,19 @@ public class TripleTriad {
     private final TripleTriadManager manager = TripleTriadManager.getInstance();
 
     public TripleTriad() {
-        blueCards.add(Card.C4467_5_TONBERRY_KING);
         blueCards.add(Card.C6762_5_WEDGE_BIGGS);
-        blueCards.add(Card.C9239_8_MINIMOG);
         blueCards.add(Card.C9862_8_IFRIT);
-        blueCards.add(Card.C926A_10_QUISTIS);
+        blueCards.add(Card.C8296_8_SIREN);
+        blueCards.add(Card.C53A8_9_DIABLOS);
+        blueCards.add(Card.C649A_10_SEIFER);
 
-        redCards.add(Card.C865A_10_ZELL);
-        redCards.add(Card.C7113_2_GRAT);
-        redCards.add(Card.C5637_5_ELNOYLE);
-        redCards.add(Card.C3345_2_BELHELMEL);
-        redCards.add(Card.C1533_1_BITE_BUG);
+        redCards.add(Card.C9239_8_MINIMOG);
+        redCards.add(Card.C2736_4_TURTAPOD);
+        redCards.add(Card.C4762_4_T_REXAUR);
+        redCards.add(Card.C5513_2_ANACONDAUR);
+        redCards.add(Card.C7354_4_HEXADRAGON);
 
-        firstTurn = MinMaxEngine.GameState.Player.MAXIMIZING;
+        firstTurn = MinMaxEngine.GameState.Player.MINIMIZING;
     }
 
     public static void main(String[] args) {

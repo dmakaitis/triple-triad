@@ -27,14 +27,24 @@ public class Card implements Comparable<Card> {
     public static final Card C6314_2_GLACIAL_EYE = new Card(2, 4, "Glacial Eye", 6, 3, 1, 4);
     public static final Card C3345_2_BELHELMEL = new Card(2, 5, "Belhelmel", 3, 3, 4, 5);
     public static final Card C5532_2_THRUSTAEVIS = new Card(2, 6, "Thrustaevis", 5, 5, 3, 2);
+    public static final Card C5513_2_ANACONDAUR = new Card(2, 7, "Anacondaur", 5, 5, 1, 3);
     public static final Card C5225_2_CREEPS = new Card(2, 8, "Creeps", 5, 2, 2, 5);
     public static final Card C4245_2_GRENDEL = new Card(2, 9, "Grendel", 4, 2, 4, 5);
     public static final Card C3721_2_JELLEYE = new Card(2, 10, "Jelleye", 3, 7, 2, 1);
+    public static final Card C5325_2_GRAND_MANTIS = new Card(2, 11, "Grand Mantis", 5, 3, 2, 5);
 
     // Level 3
+    public static final Card C6263_3_FORBIDDEN = new Card(3, 1, "Forbidden", 6, 2, 6, 3);
+    public static final Card C6631_3_ARMADODO = new Card(3, 2, "Armadodo", 6, 6, 3, 1);
     public static final Card C3555_3_TRI_FACE = new Card(3, 3, "Tri-Face", 3, 5, 5, 5);
     public static final Card C7351_3_FASTITOCALON = new Card(3, 4, "Fastitocalon", 7, 3, 5, 1);
     public static final Card C7315_3_SNOW_LION = new Card(3, 5, "Snow Lion", 7, 3, 1, 5);
+    public static final Card C5363_3_OCHU = new Card(3, 6, "Ochu", 5, 3, 6, 3);
+    public static final Card C5462_3_SAM08G = new Card(3, 7, "SAM08G", 5, 4, 6, 2);
+    public static final Card C4247_3_DEATH_CLAW = new Card(3, 8, "Death Claw", 4, 2, 4, 7);
+    public static final Card C6326_3_CACTUAR = new Card(3, 9, "Cactaur", 6, 3, 2, 6);
+    public static final Card C3464_3_TONBERRY = new Card(3, 10, "Tonberry", 3, 4, 6, 4);
+    public static final Card C7523_3_ABYSS_WORM = new Card(3, 11, "Abyss Worm", 7, 5, 2, 3);
 
     // Level 4
     public static final Card C2736_4_TURTAPOD = new Card(4, 1, "Turtapod", 2, 7, 3, 6);
@@ -43,8 +53,10 @@ public class Card implements Comparable<Card> {
     public static final Card C2376_4_BOMB = new Card(4, 4, "Bomb", 2, 3, 7, 6);
     public static final Card C1764_4_BLITZ = new Card(4, 4, "Blitz", 1, 7, 6, 4);
     public static final Card C7444_4_TORAMA = new Card(4, 7, "Torama", 7, 4, 4, 4);
+    public static final Card C3673_4_IMP = new Card(4, 8, "Imp", 3, 6, 7, 3);
     public static final Card C6327_4_BLUE_DRAGON = new Card(4, 9, "Blue Dragon", 6, 3, 2, 7);
     public static final Card C4655_4_ADAMANTOISE = new Card(4, 10, "Adamantoise", 4, 6, 5, 5);
+    public static final Card C7354_4_HEXADRAGON = new Card(4, 11, "Hexadragon", 7, 3, 5, 4);
 
     // Level 5
     public static final Card C6556_5_IRON_GIANT = new Card(5, 1, "Iron Giant", 6, 5, 5, 6);
@@ -62,8 +74,10 @@ public class Card implements Comparable<Card> {
     // Level 7 - Boss
 
     // Level 8 - GF
+    public static final Card C9367_8_ANGELO = new Card(8, 2, "Angelo", 9, 3, 6, 7);
     public static final Card C9239_8_MINIMOG = new Card(8, 4, "MiniMog", 9, 2, 3, 9);
     public static final Card C9862_8_IFRIT = new Card(8, 8, "Ifrit", 9, 8, 6, 2);
+    public static final Card C8296_8_SIREN = new Card(8, 9, "Siren", 8, 2, 9, 6);
 
     // Level 9 - GF
     public static final Card C53A8_9_DIABLOS = new Card(9, 2, "Diablos", 5, 3, 10, 8);
