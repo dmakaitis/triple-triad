@@ -70,7 +70,9 @@ public class BreadthFirstSearchEngineImpl implements BreadthFirstSearchEngine {
             } else {
                 previousPath = previous.toList();
             }
-            previousPath.add(lastEdge);
+            if (lastEdge != null) {
+                previousPath.add(lastEdge);
+            }
             return previousPath;
         }
     }

@@ -29,7 +29,7 @@ public class RuleChangeSolver {
     private static final Region QUEEN_IN_REGION = Region.GALBADIA;
 
     private static final Map<Region, List<Rule>> REGION_RULES = Map.of(
-            Region.BALAMB, asList(Rule.OPEN),
+            Region.BALAMB, asList(Rule.OPEN, Rule.SUDDEN_DEATH),
             Region.GALBADIA, asList(Rule.OPEN, Rule.SAME, Rule.PLUS),
             Region.TRABIA, asList(Rule.OPEN),
             Region.CENTRA, asList(Rule.OPEN),
@@ -39,8 +39,6 @@ public class RuleChangeSolver {
             Region.ESTHAR, asList(Rule.OPEN, Rule.ELEMENTAL)
     );
 
-    private static final List<Rule> CARRIED_RULES = REGION_RULES.get(Region.DOLLET);
-
     private static final SearchEdge USE_DRAW_POINT = new UseDrawPoint();
     private static final SearchEdge CHALLENGE_THEN_REFUSE = new ChallengeThenRefuse();
     private static final SearchEdge CHALLENGE_THEN_ACCEPT = new ChallengeThenAccept();
@@ -48,7 +46,7 @@ public class RuleChangeSolver {
     private static final List<SearchEdge> SEARCH_EDGE_LIST = unmodifiableList(asList(CHALLENGE_THEN_REFUSE, CHALLENGE_THEN_ACCEPT));
 
     public static void main(String[] args) {
-        SearchNode rootNode = new SearchNode(CARRIED_RULES);
+        SearchNode rootNode = new SearchNode();
         EdgeGenerator edgeGenerator = new EdgeGenerator();
         Predicate<SearchNode> targetSpec = node -> node.terminal && node.abolish && node.rule != Rule.OPEN;
 
@@ -142,6 +140,10 @@ public class RuleChangeSolver {
             this.rule = rule;
         }
 
+        public SearchNode carryRules(Collection<Rule> newCarriedRules) {
+            return new SearchNode(newCarriedRules, regionRules, queenInRegion, regionHasSafeDrawPoint, seed, almostDoneMixing, terminal, abolish, rule);
+        }
+
         public SearchNode advanceSeed(int advanceCount) {
             return setSeed(seed + advanceCount);
         }
@@ -193,6 +195,24 @@ public class RuleChangeSolver {
     }
 
     interface SearchEdge extends Function<SearchNode, SearchNode> {
+    }
+
+    static class ClaimRules implements SearchEdge {
+        private final Region region;
+
+        ClaimRules(Region region) {
+            this.region = region;
+        }
+
+        @Override
+        public String toString() {
+            return "Carry rules from " + region;
+        }
+
+        @Override
+        public SearchNode apply(SearchNode node) {
+            return node.carryRules(REGION_RULES.get(region));
+        }
     }
 
     static class TravelTo implements SearchEdge {
@@ -318,7 +338,13 @@ public class RuleChangeSolver {
             if (node.terminal) {
                 edges = emptyList();
             } else {
-                if (node.regionRules == null) {
+                if (node.carriedRules == null) {
+                    List<SearchEdge> newEdges = new ArrayList<>();
+                    for (Region r : Region.values()) {
+                        newEdges.add(new ClaimRules(r));
+                    }
+                    edges = unmodifiableList(newEdges);
+                } else if (node.regionRules == null) {
                     List<SearchEdge> newEdges = new ArrayList<>();
                     for (Region r : Region.values()) {
                         if (!REGION_RULES.get(r).containsAll(node.carriedRules)) {
