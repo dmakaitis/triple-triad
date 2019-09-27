@@ -5,6 +5,7 @@ import com.portkullis.tripletriad.engine.impl.BreadthFirstSearchEngineImpl;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.IntConsumer;
 import java.util.function.Predicate;
 
 /**
@@ -26,10 +27,11 @@ public interface BreadthFirstSearchEngine {
     /**
      * Returns an instance of the breadth first search engine.
      *
+     * @param depthListener a listener that will be notified of the depth of each branch being checked as the search progresses.
      * @return an instance of the breadth first search engine.
      */
-    static BreadthFirstSearchEngine getInstance() {
-        return new BreadthFirstSearchEngineImpl();
+    static BreadthFirstSearchEngine getInstance(IntConsumer depthListener) {
+        return new BreadthFirstSearchEngineImpl(depthListener);
     }
 
 }

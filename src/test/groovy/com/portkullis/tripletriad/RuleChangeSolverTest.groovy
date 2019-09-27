@@ -34,24 +34,24 @@ class RuleChangeSolverTest extends Specification {
         [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "ra"                 || true     | false   | Rule.PLUS
         [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rra"                || true     | false   | Rule.PLUS
         [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrra"               || true     | false   | Rule.PLUS
-        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrra"              || false    | false   | null
+//        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrra"              || false    | false   | null
         [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrar"             || true     | false   | null
         [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrraa"             || true     | false   | null
-        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrra"             || false    | false   | null
-        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrara"           || true     | false   | Rule.PLUS
-        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrarra"          || true     | false   | Rule.PLUS
-        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrarrra"         || true     | false   | Rule.PLUS
-        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrra"            || false    | false   | null
-        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrrra"           || false    | false   | null
+//        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrra"             || false    | false   | null
+//        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrara"           || true     | false   | Rule.PLUS
+//        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrarra"          || true     | false   | Rule.PLUS
+//        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrarrra"         || true     | false   | Rule.PLUS
+//        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrra"            || false    | false   | null
+//        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrrra"           || false    | false   | null
         [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrrrra"          || true     | false   | Rule.PLUS
         [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrrrrr"          || false    | false   | null
         [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrrrrrr"         || true     | false   | null
         [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrrrrra"         || true     | false   | null
-        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrarrrrrrrrrrr"  || false    | false   | null
+//        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrarrrrrrrrrrr"  || false    | false   | null
         [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrarrrrrrrrrrrr" || true     | false   | null
         [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrarrrrrrrrrrra" || true     | false   | null
-        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrraa"            || true     | false   | Rule.PLUS
-        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrraa"           || true     | false   | Rule.PLUS
+//        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrraa"            || true     | false   | Rule.PLUS
+//        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrraa"           || true     | false   | Rule.PLUS
 
     }
 

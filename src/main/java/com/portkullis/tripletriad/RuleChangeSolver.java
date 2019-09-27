@@ -4,11 +4,15 @@ import com.portkullis.tripletriad.engine.BreadthFirstSearchEngine;
 import com.portkullis.tripletriad.engine.RngSimulationEngine;
 import com.portkullis.tripletriad.engine.model.Rule;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.IntConsumer;
 import java.util.function.Predicate;
 
 import static java.util.Arrays.asList;
@@ -18,8 +22,9 @@ import static java.util.Collections.unmodifiableList;
 public class RuleChangeSolver {
 
     // Draw formula for fully charged Ultima DP in Shumi Village: (20 * (rnd + 128) / 512) + 1
+    private static final DepthPrinter depthListener = new DepthPrinter();
     private static final RngSimulationEngine rngSimulationEngine = RngSimulationEngine.getInstance();
-    private static final BreadthFirstSearchEngine breadthFirstSearchEngine = BreadthFirstSearchEngine.getInstance();
+    private static final BreadthFirstSearchEngine breadthFirstSearchEngine = BreadthFirstSearchEngine.getInstance(depthListener);
 
     private static final Region QUEEN_IN_REGION = Region.GALBADIA;
 
@@ -47,7 +52,9 @@ public class RuleChangeSolver {
         EdgeGenerator edgeGenerator = new EdgeGenerator();
         Predicate<SearchNode> targetSpec = node -> node.terminal && node.abolish && node.rule != Rule.OPEN;
 
-        List<SearchEdge> path = breadthFirstSearchEngine.findPath(rootNode, edgeGenerator, targetSpec, 25);
+        List<SearchEdge> path = breadthFirstSearchEngine.findPath(rootNode, edgeGenerator, targetSpec, 21);
+
+        depthListener.printUpdate();
 
         SearchNode node = rootNode;
         if (path == null) {
@@ -331,4 +338,26 @@ public class RuleChangeSolver {
         }
     }
 
+    private static class DepthPrinter implements IntConsumer {
+
+        private static final NumberFormat NUMBER_FORMAT = NumberFormat.getNumberInstance(Locale.US);
+
+        private final long startTime = new Date().getTime();
+        private int lastDepth = Integer.MIN_VALUE;
+        private long nodeCount = 0;
+
+        @Override
+        public void accept(int value) {
+            ++nodeCount;
+            if ((value > lastDepth) || (nodeCount % 10000000 == 0)) {
+                lastDepth = value;
+                printUpdate();
+            }
+        }
+
+        public void printUpdate() {
+            Date now = new Date();
+            System.out.println(now + " (" + NUMBER_FORMAT.format(now.getTime() - startTime) + "ms) Search depth: " + lastDepth + ", Node count: " + NUMBER_FORMAT.format(nodeCount));
+        }
+    }
 }
