@@ -2,6 +2,7 @@ package com.portkullis.tripletriad
 
 import com.portkullis.tripletriad.engine.model.Rule
 import spock.lang.Specification
+import spock.lang.Unroll
 
 import java.util.function.Function
 
@@ -11,31 +12,47 @@ class RuleChangeSolverTest extends Specification {
     def challengeThenRefuse = new RuleChangeSolver.ChallengeThenRefuse()
     def challengeThenAccept = new RuleChangeSolver.ChallengeThenAccept()
 
-    def "Action sequence has the proper outcome"() {
+    @Unroll
+    def "Action sequence '#actions' has the proper outcome"() {
         given:
-          def actionFunction = buildActionFunction(actions)
+        def startNode = new RuleChangeSolver.SearchNode(carried, local, false, false)
+
+        def actionFunction = buildActionFunction(actions)
 
         when:
-          RuleChangeSolver.SearchNode result = actionFunction.apply(new RuleChangeSolver.SearchNode(carried, local, false))
+        RuleChangeSolver.SearchNode result = actionFunction.apply(startNode)
 
         then:
-          result.abolish == abolish
-          result.rule == rule
+        result.terminal == terminal
+        result.abolish == abolish
+        result.rule == rule
 
         where:
-          local                                                                     | carried                | queen | actions     || abolish | rule
-          [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "dra"       || true    | Rule.ELEMENTAL
-          [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "a"         || false   | Rule.PLUS
-          [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "ra"        || false   | Rule.PLUS
-          [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rra"       || false   | Rule.PLUS
-          [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrra"      || false   | Rule.PLUS
-          [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrra"     || false   | null
-          [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrra"    || false   | null
-          [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrra"   || false   | null
-          [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrrra"  || false   | null
-          [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrrrra" || false   | Rule.PLUS
-          [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrraa"   || false   | Rule.PLUS
-          [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrraa"  || false   | Rule.PLUS
+        local                                                                     | carried                | queen | actions              || terminal | abolish | rule
+        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "dra"                || true     | true    | Rule.ELEMENTAL
+        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "a"                  || true     | false   | Rule.PLUS
+        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "ra"                 || true     | false   | Rule.PLUS
+        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rra"                || true     | false   | Rule.PLUS
+        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrra"               || true     | false   | Rule.PLUS
+        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrra"              || false    | false   | null
+        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrar"             || true     | false   | null
+        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrraa"             || true     | false   | null
+        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrra"             || false    | false   | null
+        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrara"           || true     | false   | Rule.PLUS
+        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrarra"          || true     | false   | Rule.PLUS
+        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrarrra"         || true     | false   | Rule.PLUS
+        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrra"            || false    | false   | null
+        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrrra"           || false    | false   | null
+        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrrrra"          || true     | false   | Rule.PLUS
+        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrrrrr"          || false    | false   | null
+        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrrrrrr"         || true     | false   | null
+        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrrrrra"         || true     | false   | null
+        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrarrrrrrrrrrr"  || false    | false   | null
+        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrarrrrrrrrrrrr" || true     | false   | null
+        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrarrrrrrrrrrra" || true     | false   | null
+        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrraa"            || true     | false   | Rule.PLUS
+        [Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL] | [Rule.OPEN, Rule.PLUS] | false | "rrrrrraa"           || true     | false   | Rule.PLUS
+
     }
 
     /////////////////////////////////////////////////////////////

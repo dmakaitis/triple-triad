@@ -2,11 +2,7 @@ package com.portkullis.tripletriad.engine.impl;
 
 import com.portkullis.tripletriad.engine.BreadthFirstSearchEngine;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -22,11 +18,11 @@ public class BreadthFirstSearchEngineImpl implements BreadthFirstSearchEngine {
 
         while (!searchBranches.isEmpty()) {
             Branch<N, E> branch = searchBranches.poll();
-            if (branch.path.size() <= searchDepth) {
-                if (targetSpecification.test(branch.endNode)) {
-                    result = branch;
-                    searchBranches.clear();
-                } else {
+            if (targetSpecification.test(branch.endNode)) {
+                result = branch;
+                searchBranches.clear();
+            } else {
+                if (branch.path.size() < searchDepth) {
                     Collection<E> newEdges = edgeProvider.apply(branch.endNode);
                     for (E edge : newEdges) {
                         List<E> newPath = new ArrayList<>(branch.path);

@@ -64,4 +64,9 @@ public class RngSimulationEngineImpl implements RngSimulationEngine {
         return getNextValue() < 128;
     }
 
+    @Override
+    public boolean getNextDoneMixingFlag() {
+        return getNextValue() < 64;
+    }
+
 }

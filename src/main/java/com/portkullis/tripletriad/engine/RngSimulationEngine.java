@@ -50,6 +50,13 @@ public interface RngSimulationEngine {
     boolean getNextAbolishFlag();
 
     /**
+     * Returns {@code true} if the next random value indicates that rules should no longer be mixed.
+     *
+     * @return {@code true} if the next random value indicates that rules should no longer be mixed; {@code false} otherwise.
+     */
+    boolean getNextDoneMixingFlag();
+
+    /**
      * Returns an instance of the RNG simulation engine.
      *
      * @return an instance of the RNG simulation engine.

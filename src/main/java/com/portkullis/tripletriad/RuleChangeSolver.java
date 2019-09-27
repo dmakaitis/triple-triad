@@ -25,29 +25,29 @@ public class RuleChangeSolver {
 
     private static final Map<Region, List<Rule>> REGION_RULES = Map.of(
             Region.BALAMB, asList(Rule.OPEN),
-            Region.GALBADIA, asList(Rule.OPEN),
+            Region.GALBADIA, asList(Rule.OPEN, Rule.SAME, Rule.PLUS),
             Region.TRABIA, asList(Rule.OPEN),
-            Region.CENTRA, asList(Rule.OPEN, Rule.PLUS),
-            Region.DOLLET, asList(Rule.OPEN),
+            Region.CENTRA, asList(Rule.OPEN),
+            Region.DOLLET, asList(Rule.OPEN, Rule.SAME),
             Region.FH, asList(Rule.OPEN),
             Region.LUNAR, asList(Rule.OPEN, Rule.SUDDEN_DEATH, Rule.SAME, Rule.SAME_WALL, Rule.ELEMENTAL),
-            Region.ESTHAR, asList(Rule.OPEN)
+            Region.ESTHAR, asList(Rule.OPEN, Rule.ELEMENTAL)
     );
 
-    private static final List<Rule> CARRIED_RULES = REGION_RULES.get(Region.CENTRA);
+    private static final List<Rule> CARRIED_RULES = REGION_RULES.get(Region.DOLLET);
 
     private static final SearchEdge USE_DRAW_POINT = new UseDrawPoint();
     private static final SearchEdge CHALLENGE_THEN_REFUSE = new ChallengeThenRefuse();
     private static final SearchEdge CHALLENGE_THEN_ACCEPT = new ChallengeThenAccept();
 
-    private static final List<SearchEdge> SEARCH_EDGE_LIST = asList(CHALLENGE_THEN_REFUSE, CHALLENGE_THEN_ACCEPT);
+    private static final List<SearchEdge> SEARCH_EDGE_LIST = unmodifiableList(asList(CHALLENGE_THEN_REFUSE, CHALLENGE_THEN_ACCEPT));
 
     public static void main(String[] args) {
         SearchNode rootNode = new SearchNode(CARRIED_RULES);
         EdgeGenerator edgeGenerator = new EdgeGenerator();
         Predicate<SearchNode> targetSpec = node -> node.terminal && node.abolish && node.rule != Rule.OPEN;
 
-        List<SearchEdge> path = breadthFirstSearchEngine.findPath(rootNode, edgeGenerator, targetSpec, 20);
+        List<SearchEdge> path = breadthFirstSearchEngine.findPath(rootNode, edgeGenerator, targetSpec, 25);
 
         SearchNode node = rootNode;
         if (path == null) {
@@ -75,12 +75,12 @@ public class RuleChangeSolver {
     }
 
     public enum Region {
-        BALAMB(false),
-        GALBADIA(false),
-        TRABIA(false),
-        CENTRA(false),
-        DOLLET(false),
-        FH(false),
+        BALAMB(true),
+        GALBADIA(true),
+        TRABIA(true),
+        CENTRA(true),
+        DOLLET(true),
+        FH(true),
         LUNAR(false),
         ESTHAR(false);
 
@@ -98,36 +98,38 @@ public class RuleChangeSolver {
         private final boolean queenInRegion;
         private final boolean regionHasSafeDrawPoint;
         private final int seed;
+        private final boolean almostDoneMixing;
         private final boolean terminal;
         private final boolean abolish;
         private final Rule rule;
 
         SearchNode() {
-            this(null, null, false, false, 0, false, false, null);
+            this(null, null, false, false, 0, false, false, false, null);
         }
 
         SearchNode(Collection<Rule> carriedRules) {
-            this(carriedRules, null, false, false, 0, false, false, null);
+            this(carriedRules, null, false, false, 0, false, false, false, null);
         }
 
         SearchNode(Collection<Rule> carriedRules, Collection<Rule> regionRules, boolean queenInRegion, boolean regionHasSafeDrawPoint) {
-            this(carriedRules, regionRules, queenInRegion, regionHasSafeDrawPoint, 0, false, false, null);
+            this(carriedRules, regionRules, queenInRegion, regionHasSafeDrawPoint, 0, false, false, false, null);
         }
 
         private SearchNode(Collection<Rule> carriedRules, Collection<Rule> regionRules, boolean queenInRegion, boolean regionHasSafeDrawPoint, int seed) {
-            this(carriedRules, regionRules, queenInRegion, regionHasSafeDrawPoint, seed, false, false, null);
+            this(carriedRules, regionRules, queenInRegion, regionHasSafeDrawPoint, seed, false, false, false, null);
         }
 
         private SearchNode(SearchNode oldNode, int seed, boolean terminal, boolean abolish, Rule rule) {
-            this(oldNode.carriedRules, oldNode.regionRules, oldNode.queenInRegion, oldNode.regionHasSafeDrawPoint, seed, terminal, abolish, rule);
+            this(oldNode.carriedRules, oldNode.regionRules, oldNode.queenInRegion, oldNode.regionHasSafeDrawPoint, seed, false, terminal, abolish, rule);
         }
 
-        private SearchNode(Collection<Rule> carriedRules, Collection<Rule> regionRules, boolean queenInRegion, boolean regionHasSafeDrawPoint, int seed, boolean terminal, boolean abolish, Rule rule) {
+        private SearchNode(Collection<Rule> carriedRules, Collection<Rule> regionRules, boolean queenInRegion, boolean regionHasSafeDrawPoint, int seed, boolean almostDoneMixing, boolean terminal, boolean abolish, Rule rule) {
             this.carriedRules = carriedRules;
             this.regionRules = regionRules;
             this.queenInRegion = queenInRegion;
             this.regionHasSafeDrawPoint = regionHasSafeDrawPoint;
             this.seed = seed;
+            this.almostDoneMixing = almostDoneMixing;
             this.terminal = terminal;
             this.abolish = abolish;
             this.rule = rule;
@@ -138,19 +140,23 @@ public class RuleChangeSolver {
         }
 
         public SearchNode setRegion(int newSeed, Collection<Rule> newRegionRules, boolean queenInNewRegion, boolean newRegionHasSafeDrawPoint) {
-            return new SearchNode(carriedRules, newRegionRules, queenInNewRegion, newRegionHasSafeDrawPoint, newSeed, terminal, abolish, rule);
+            return new SearchNode(carriedRules, newRegionRules, queenInNewRegion, newRegionHasSafeDrawPoint, newSeed, almostDoneMixing, terminal, abolish, rule);
         }
 
         public SearchNode setSeed(int newSeed) {
-            return new SearchNode(carriedRules, regionRules, queenInRegion, regionHasSafeDrawPoint, newSeed, terminal, abolish, rule);
+            return new SearchNode(carriedRules, regionRules, queenInRegion, regionHasSafeDrawPoint, newSeed, almostDoneMixing, terminal, abolish, rule);
+        }
+
+        public SearchNode setSeedAlmostDoneMixing(int newSeed) {
+            return new SearchNode(carriedRules, regionRules, queenInRegion, regionHasSafeDrawPoint, newSeed, true, almostDoneMixing, abolish, rule);
         }
 
         public SearchNode setSpreadRule(int newSeed, Rule rule) {
-            return new SearchNode(carriedRules, regionRules, queenInRegion, regionHasSafeDrawPoint, newSeed, true, false, rule);
+            return new SearchNode(carriedRules, regionRules, queenInRegion, regionHasSafeDrawPoint, newSeed, almostDoneMixing, true, false, rule);
         }
 
         public SearchNode setAbolishRule(int newSeed, Rule rule) {
-            return new SearchNode(carriedRules, regionRules, queenInRegion, regionHasSafeDrawPoint, newSeed, true, true, rule);
+            return new SearchNode(carriedRules, regionRules, queenInRegion, regionHasSafeDrawPoint, newSeed, almostDoneMixing, true, true, rule);
         }
 
         public Collection<Rule> getCarriedRules() {
@@ -197,19 +203,11 @@ public class RuleChangeSolver {
         @Override
         public SearchNode apply(SearchNode node) {
             Collection<Rule> newRegionRules = REGION_RULES.get(region);
-            return node.setRegion(0, newRegionRules, QUEEN_IN_REGION == region, false);
-        }
-    }
-
-    static class ChallengeThenRefuse implements SearchEdge {
-        @Override
-        public String toString() {
-            return "Challenge, then refuse";
-        }
-
-        @Override
-        public SearchNode apply(SearchNode node) {
-            return node.advanceSeed(node.queenInRegion ? 3 : 2);
+            SearchNode newNode = node.setRegion(0, newRegionRules, QUEEN_IN_REGION == region, region.hasSafeDrawPoint);
+            if (newNode.regionRules.containsAll(newNode.carriedRules)) {
+                newNode = newNode.setSpreadRule(0, null);
+            }
+            return newNode;
         }
     }
 
@@ -225,7 +223,31 @@ public class RuleChangeSolver {
         }
     }
 
-    static class ChallengeThenAccept implements SearchEdge {
+    static class ChallengeThenRefuse implements SearchEdge {
+        @Override
+        public String toString() {
+            return "Challenge, then refuse";
+        }
+
+        @Override
+        public SearchNode apply(SearchNode node) {
+            rngSimulationEngine.setSeed(node.seed);
+            boolean doneMixing = rngSimulationEngine.getNextDoneMixingFlag();
+            int rnd2 = rngSimulationEngine.getNextValue();
+            if (node.queenInRegion) {
+                int rnd3 = rngSimulationEngine.getNextValue();
+            }
+            SearchNode newNode;
+            if (doneMixing) {
+                newNode = node.setSeedAlmostDoneMixing(rngSimulationEngine.getSeed());
+            } else {
+                newNode = node.setSeed(rngSimulationEngine.getSeed());
+            }
+            return newNode;
+        }
+    }
+
+    static class ChallengeThenAccept extends ChallengeThenRefuse {
         @Override
         public String toString() {
             return "Challenge, then accept";
@@ -233,27 +255,35 @@ public class RuleChangeSolver {
 
         @Override
         public SearchNode apply(SearchNode node) {
-            rngSimulationEngine.setSeed(node.seed + (node.queenInRegion ? 3 : 2));
-            Rule rule = null;
-            for (int i = 0; i < 3; i++) {
-                rule = rngSimulationEngine.getNextRule();
-                if (canSpread(node, rule)) {
-                    return node.setSpreadRule(rngSimulationEngine.getSeed(), rule);
+            SearchNode challengeNode = super.apply(node);
+
+            SearchNode result;
+            if (challengeNode.terminal) {
+                result = challengeNode;
+            } else {
+                rngSimulationEngine.setSeed(challengeNode.seed);
+                Rule rule = null;
+                for (int i = 0; i < 3; i++) {
+                    rule = rngSimulationEngine.getNextRule();
+                    if (canSpread(node, rule)) {
+                        return node.setSpreadRule(rngSimulationEngine.getSeed(), rule);
+                    }
                 }
-            }
-            if (rngSimulationEngine.getNextAbolishFlag() && canAbolish(node, rule)) {
-                return node.setAbolishRule(rngSimulationEngine.getSeed(), rule);
-            }
+                if (rngSimulationEngine.getNextAbolishFlag() && canAbolish(node, rule)) {
+                    return node.setAbolishRule(rngSimulationEngine.getSeed(), rule);
+                }
 
-            // Extra stuff according to ForteGSOmega
-//            if (rngSimulationEngine.getNextValue() <= 74) {
+                // Extra stuff according to ForteGSOmega
+                if (rngSimulationEngine.getNextValue() <= 74) {
 //                rngSimulationEngine.getNextValue();
 //                rngSimulationEngine.getNextValue();
 //                rngSimulationEngine.getNextValue();
-//            }
+                }
 
-//            return node.setSeed(rngSimulationEngine.getSeed());
-            return node.setSpreadRule(rngSimulationEngine.getSeed(), null);
+//                result = node.setSeed(rngSimulationEngine.getSeed());
+                result = node.setSpreadRule(rngSimulationEngine.getSeed(), null);
+            }
+            return result;
         }
 
         private boolean canAbolish(SearchNode node, Rule rule) {
@@ -265,26 +295,37 @@ public class RuleChangeSolver {
         }
     }
 
-
     private static class EdgeGenerator implements Function<SearchNode, Collection<SearchEdge>> {
+        private final List<SearchEdge> searchListWithDraw;
+
+        private EdgeGenerator() {
+            List<SearchEdge> list = new ArrayList<>();
+            list.add(USE_DRAW_POINT);
+            list.addAll(SEARCH_EDGE_LIST);
+            searchListWithDraw = unmodifiableList(list);
+        }
+
         @Override
         public Collection<SearchEdge> apply(SearchNode node) {
             Collection<SearchEdge> edges;
-            if (node.regionRules == null) {
-                List<SearchEdge> newEdges = new ArrayList<>();
-                for (Region r : Region.values()) {
-                    if (!REGION_RULES.get(r).containsAll(node.carriedRules)) {
-                        newEdges.add(new TravelTo(r));
+            if (node.terminal) {
+                edges = emptyList();
+            } else {
+                if (node.regionRules == null) {
+                    List<SearchEdge> newEdges = new ArrayList<>();
+                    for (Region r : Region.values()) {
+                        if (!REGION_RULES.get(r).containsAll(node.carriedRules)) {
+                            newEdges.add(new TravelTo(r));
+                        }
+                    }
+                    edges = unmodifiableList(newEdges);
+                } else {
+                    if (node.regionHasSafeDrawPoint) {
+                        edges = searchListWithDraw;
+                    } else {
+                        edges = SEARCH_EDGE_LIST;
                     }
                 }
-                edges = unmodifiableList(newEdges);
-            } else {
-                List<SearchEdge> newEdges = new ArrayList<>();
-                if (node.regionHasSafeDrawPoint) {
-                    newEdges.add(USE_DRAW_POINT);
-                }
-                newEdges.addAll(node.terminal ? emptyList() : SEARCH_EDGE_LIST);
-                edges = unmodifiableList(newEdges);
             }
             return edges;
         }
